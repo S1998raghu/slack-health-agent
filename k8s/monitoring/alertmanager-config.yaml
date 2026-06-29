@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alertmanager-config
+  namespace: monitoring
+stringData:
+  alertmanager.yaml: |
+    global:
+      resolve_timeout: 5m
+
+    route:
+      group_by: ['alertname', 'job']
+      group_wait: 10s
+      group_interval: 5m
+      repeat_interval: 1h
+      receiver: slack-webhook
+
+    receivers:
+    - name: slack-webhook
+      webhook_configs:
+      - url: "http://slack-bot-service:8000/alert"
+        send_resolved: true

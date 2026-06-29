@@ -1,0 +1,43 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: hotrod-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  groups:
+  - name: hotrod
+    rules:
+    - alert: HighErrorRate
+      expr: |
+        rate(hotrod_request_latency_count{error="true"}[1m])
+        /
+        rate(hotrod_request_latency_count[1m]) > 0.05
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High error rate on {{ $labels.exported_endpoint }}"
+        description: "Error rate is {{ $value | humanizePercentage }} on endpoint {{ $labels.exported_endpoint }}"
+
+    - alert: HighLatency
+      expr: |
+        histogram_quantile(0.99,
+          rate(hotrod_request_latency_bucket[5m])
+        ) > 1
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High p99 latency on {{ $labels.exported_endpoint }}"
+        description: "p99 latency is {{ $value }}s on endpoint {{ $labels.exported_endpoint }}"
+
+    - alert: ServiceDown
+      expr: up{job="hotrod"} == 0
+      for: 30s
+      labels:
+        severity: critical
+      annotations:
+        summary: "HotROD service is down"
+        description: "HotROD instance {{ $labels.instance }} has been down for 30s"

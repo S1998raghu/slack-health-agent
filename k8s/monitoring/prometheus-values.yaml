@@ -1,0 +1,26 @@
+# Values used to install kube-prometheus-stack
+# helm install prometheus prometheus-community/kube-prometheus-stack \
+#   --namespace monitoring --create-namespace -f prometheus-values.yaml
+
+prometheus:
+  prometheusSpec:
+    # Use standard image (not distroless) for Docker Desktop compatibility
+    image:
+      registry: quay.io
+      repository: prometheus/prometheus
+      tag: v3.12.0
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+
+alertmanager:
+  alertmanagerSpec:
+    # Alertmanager webhook config will be set via secret
+    configSecret: alertmanager-config
+
+nodeExporter:
+  # Disable node-exporter — crashes on Docker Desktop (Mac)
+  enabled: false
+
+grafana:
+  enabled: false
