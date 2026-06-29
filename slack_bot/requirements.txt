@@ -1,0 +1,6 @@
+slack-bolt
+fastapi
+uvicorn
+anthropic
+mcp
+httpx
