@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - "9093:9093"
+
+  # Fake service that exposes metrics for demo
+  demo-service:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
