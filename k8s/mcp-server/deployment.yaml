@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-server
+  labels:
+    app: mcp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcp-server
+  template:
+    metadata:
+      labels:
+        app: mcp-server
+    spec:
+      containers:
+      - name:  mcp-server
+        imagePullPolicy: Never
+        image: mcp-server:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: PROMETHEUS_URL
+          value: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-service
+spec:
+  type: ClusterIP
+  selector:
+    app: mcp-server
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
