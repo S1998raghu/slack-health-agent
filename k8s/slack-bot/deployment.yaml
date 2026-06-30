@@ -14,10 +14,11 @@ spec:
       labels:
         app: slack-bot
     spec:
+      serviceAccountName: slack-bot-ksa
       containers:
       - name: slack-bot
-        image: slack-bot:latest
-        imagePullPolicy: Never
+        image: us-central1-docker.pkg.dev/slack-bot-500920/slack-health/slack-bot:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
         envFrom:

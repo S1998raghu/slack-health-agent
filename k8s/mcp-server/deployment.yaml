@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name:  mcp-server
-        imagePullPolicy: Never
-        image: mcp-server:latest
+        imagePullPolicy: Always
+        image: us-central1-docker.pkg.dev/slack-bot-500920/slack-health/mcp-server:latest
         ports:
         - containerPort: 8000
         env:

@@ -3,7 +3,7 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 
 PROMETHEUS_URL = os.getenv("PROMETHEUS_URL", "http://localhost:9090")
-mcp =  FastMCP("prometheus-health")
+mcp = FastMCP("prometheus-health", host="0.0.0.0", port=8000)
 
 @mcp.tool()
 async def get_service_health() -> str:
