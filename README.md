@@ -204,12 +204,7 @@ cd mcp_server && pip install -r requirements.txt && python server.py
 cd slack_bot && pip install -r requirements.txt && python bot.py
 ```
 
-Use [ngrok](https://ngrok.com) to expose the bot to Slack:
-```bash
-ngrok http 3000
-```
-
-Set the ngrok URL as your Slack app's slash command request URL at api.slack.com.
+Set your Slack app's slash command request URL to `http://<your-bot-ip>:3000/slack/{command}` at api.slack.com.
 
 ---
 
@@ -233,12 +228,4 @@ kubectl apply -f k8s/slack-bot/
 kubectl apply -f k8s/monitoring/
 ```
 
----
 
-## Limitations
-
-See [limitations.md](limitations.md) for a full list. Key ones:
-
-- Claude takes 5-10s to respond — mitigated with `ack()` + `respond()` pattern
-- No persistent memory across slash commands — each command is a fresh context
-- Slash commands are pull-based; proactive alerts require Alertmanager to be configured and firing
