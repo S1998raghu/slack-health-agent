@@ -14,9 +14,14 @@ stringData:
       group_interval: 5m
       repeat_interval: 1h
       receiver: slack-webhook
+      routes:
+      - receiver: "null"
+        matchers:
+        - alertname = "Watchdog"
 
     receivers:
+    - name: "null"
     - name: slack-webhook
       webhook_configs:
-      - url: "http://slack-bot-service:8000/alert"
+      - url: "http://slack-bot.default.svc.cluster.local:3000/alert"
         send_resolved: true

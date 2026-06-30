@@ -14,9 +14,20 @@ prometheus:
     serviceMonitorNamespaceSelector: {}
 
 alertmanager:
-  alertmanagerSpec:
-    # Alertmanager webhook config will be set via secret
-    configSecret: alertmanager-config
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['alertname', 'job']
+      group_wait: 10s
+      group_interval: 5m
+      repeat_interval: 1h
+      receiver: slack-webhook
+    receivers:
+    - name: slack-webhook
+      webhook_configs:
+      - url: "http://slack-bot.default.svc.cluster.local:3000/alert"
+        send_resolved: true
 
 nodeExporter:
   # Disable node-exporter — crashes on Docker Desktop (Mac)
