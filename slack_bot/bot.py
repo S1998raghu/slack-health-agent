@@ -100,7 +100,7 @@ async def receive_alert(req: Request):
         summary = alert["annotations"].get("summary", "")
         prompt = f"Alert fired: {name} (severity: {severity}). Summary: {summary}. Analyze this and suggest what an on-call engineer should check first."
         result = await ask_claude(prompt)
-        app.client.chat_postMessage(channel="#oncall", text=result)
+        await app.client.chat_postMessage(channel="#oncall", text=result)
     return {"ok": True}
 
 if __name__ == "__main__":
