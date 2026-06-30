@@ -18,6 +18,9 @@ stringData:
       - receiver: "null"
         matchers:
         - alertname = "Watchdog"
+      - receiver: "null"
+        matchers:
+        - alertname =~ "KubeCPUOvercommit|KubeMemoryOvercommit|KubeletDown|KubeProxyDown|TargetDown"
 
     receivers:
     - name: "null"
