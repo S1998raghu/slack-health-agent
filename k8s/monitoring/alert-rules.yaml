@@ -14,7 +14,7 @@ spec:
         rate(hotrod_request_latency_count{error="true"}[1m])
         /
         rate(hotrod_request_latency_count[1m]) > 0.05
-      for: 1m
+      for: 30s  # production recommendation: 1m — reduced for demo responsiveness
       labels:
         severity: critical
       annotations:
@@ -26,7 +26,7 @@ spec:
         histogram_quantile(0.99,
           rate(hotrod_request_latency_bucket[5m])
         ) > 1
-      for: 2m
+      for: 30s  # production recommendation: 2m — reduced for demo responsiveness
       labels:
         severity: warning
       annotations:
