@@ -27,6 +27,8 @@ spec:
         env:
         - name: MCP_SERVER_URL
           value: "http://mcp-service:8000/sse"
+        - name: SERVICE_NAME
+          value: "HotROD"
 ---
 apiVersion: v1
 kind: Service
