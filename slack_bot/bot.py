@@ -112,12 +112,15 @@ async def receive_alert(req: Request):
         summary = alert["annotations"].get("summary", "")
         prompt = f"""Alert fired on {SERVICE_NAME}: {name} (severity: {severity}). Summary: {summary}.
 
-Reply in exactly this format, no extra text:
+Reply in exactly this format, no extra text. Do not change the first line:
 
 🚨 ALERT: [{SERVICE_NAME}] {name}
 📋 CAUSE: one sentence explaining what metric crossed what threshold and why it matters
 🔧 FIX: one sentence on the single most important thing the on-call engineer should do right now"""
         result = await ask_claude(prompt)
+        header = f"🚨 ALERT: [{SERVICE_NAME}] {name}\n"
+        if not result.startswith(header):
+            result = header + "\n".join(result.split("\n")[1:])
         await app.client.chat_postMessage(channel="#oncall", text=result)
     return {"ok": True}
 
