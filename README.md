@@ -201,7 +201,7 @@ wait
 
 **Step 2 — Watch the bot logs for the incoming alert webhook:**
 ```bash
-kubectl logs deployment/slack-bot -f
+kubectl logs deployment/slack-bot --since=60s -f
 ```
 
 You should see `POST /alert HTTP/1.1 200 OK` appear within 30-60 seconds.
