@@ -24,7 +24,7 @@ spec:
     - alert: HighLatency
       expr: |
         histogram_quantile(0.99,
-          rate(hotrod_request_latency_bucket[5m])
+          rate(hotrod_request_latency_bucket[1m])  # production recommendation: [5m] — reduced for demo so spike dominates window faster
         ) > 1
       for: 30s  # production recommendation: 2m — reduced for demo responsiveness
       labels:
