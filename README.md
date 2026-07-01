@@ -177,13 +177,45 @@ limitations.md        # Known limitations
 
 ## Judge access
 
-The bot is live in the Slack Developer Sandbox. To test:
-
-1. Open the sandbox workspace
-2. Type `/health` or `/top` in any channel
-3. Watch `#oncall` for proactive alerts from Alertmanager
-
 Sandbox member access has been granted to `slackhack@salesforce.com` and `testing@devpost.com`.
+
+### Testing slash commands (pull-based)
+
+Open the sandbox workspace and type in any channel:
+```
+/health
+/top
+```
+
+Claude will respond within 5-10 seconds with a structured summary.
+
+### Testing proactive alerts (push-based)
+
+**Step 1 — Generate traffic to trigger high latency:**
+```bash
+for i in $(seq 1 50); do
+  curl -s "http://136.64.135.195:8080/dispatch?customer=123" > /dev/null &
+done
+wait
+```
+
+**Step 2 — Watch the bot logs for the incoming alert webhook:**
+```bash
+kubectl logs deployment/slack-bot -f
+```
+
+You should see `POST /alert HTTP/1.1 200 OK` appear within 30-60 seconds.
+
+**Step 3 — Check `#oncall` in Slack**
+
+A message will appear in the format:
+```
+🚨 ALERT: [HotROD] HighLatency
+📋 CAUSE: p99 latency crossed 1s threshold on GET_/customer
+🔧 FIX: Check downstream database query performance
+```
+
+> Note: Alert `for` duration is set to `30s` for demo responsiveness. Production recommendation is `2m` to avoid false positives.
 
 ---
 
@@ -204,7 +236,12 @@ cd mcp_server && pip install -r requirements.txt && python server.py
 cd slack_bot && pip install -r requirements.txt && python bot.py
 ```
 
-Set your Slack app's slash command request URL to `http://<your-bot-ip>:3000/slack/{command}` at api.slack.com.
+Use [ngrok](https://ngrok.com) to expose the bot to Slack — required locally since Slack needs a public URL:
+```bash
+ngrok http 3000
+```
+
+Set the ngrok URL as your Slack app's slash command request URL at api.slack.com. On GKE, use the LoadBalancer IP instead — no ngrok needed.
 
 ---
 
