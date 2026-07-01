@@ -138,6 +138,18 @@
 
 ---
 
+## 15. Use kube-prometheus-stack over Google Managed Prometheus (GMP)
+
+**Decision:** Installed the open-source `prometheus-community/kube-prometheus-stack` Helm chart instead of using GKE's built-in Google Managed Prometheus.
+
+**Why:** GMP has no Alertmanager. When an alert fires in GMP it routes through Google Cloud Alerting, which supports a fixed set of notification channels (email, PagerDuty, etc.) — you cannot point it at an arbitrary webhook URL. The entire push-based flow depends on Alertmanager making an HTTP POST to the bot's `/alert` endpoint, which then passes the alert through Claude before posting to `#oncall`. Without Alertmanager, this flow does not exist.
+
+**Tradeoff:** `kube-prometheus-stack` on GKE Autopilot required disabling several components that Autopilot does not allow (`nodeExporter`, `kubeScheduler`, `kubeEtcd`, `kubeControllerManager`, `kubeProxy`, `coreDns`). GMP would have required zero configuration for scraping but would have eliminated the AI-powered push alerting entirely.
+
+**Rule of thumb:** Use GMP when you only need metrics and dashboards on GKE. Use `kube-prometheus-stack` when you need full Alertmanager control — specifically custom webhooks.
+
+---
+
 ## 14. FastAPI as the HTTP layer for the Slack bot
 
 **Decision:** The Slack bot runs on FastAPI (`uvicorn`), with `AsyncSlackRequestHandler` bridging Slack Bolt to FastAPI.
